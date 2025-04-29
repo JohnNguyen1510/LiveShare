@@ -2,7 +2,13 @@
   "name": "liveshare",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "playwright test",
+    "test:setup": "playwright test tests/auth.setup.js",
+    "test:events": "playwright test tests/eventFlow.spec.js",
+    "test:debug": "playwright test --debug",
+    "report": "playwright show-report"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
