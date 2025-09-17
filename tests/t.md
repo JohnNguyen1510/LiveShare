@@ -1,306 +1,296 @@
-# V3 DMS — Playwright Automation
+# Document to run test for the V3 DMS project
 
-> Comprehensive guide to clone, set up, and run automation tests for the V3 DMS project using Playwright.
+# Introduction
 
----
-
-## Table of Contents
-
-1. [Introduction](#introduction)
-2. [Prerequisites](#prerequisites)
-3. [Project structure](#project-structure)
-4. [Setup — clone & install](#setup--clone--install)
-5. [Save authentication state](#save-authentication-state)
-6. [Run tests](#run-tests)
-7. [Run tests in different environments](#run-tests-in-different-environments)
-8. [Environment configuration files (DMS)](#environment-configuration-files-dms)
-9. [Playwright configuration highlights](#playwright-configuration-highlights)
-10. [Reporting & artifacts](#reporting--artifacts)
-11. [Troubleshooting](#troubleshooting)
-12. [Notes & best practices](#notes--best-practices)
-13. [License / Contact](#license--contact)
+* This document provides a comprehensive guide to cloning, setting up, and running automation tests from the GitHub repository at [https://github.com/spectrio-ir-dang/my-v3-dms-auto-playwright](https://github.com/spectrio-ir-dang/my-v3-dms-auto-playwright).
+* The project is an automation testing framework built with Playwright, a popular end-to-end testing library for web applications. It tests a V3 DMS application and features authentication state management, custom reporting with TestRail integration, and webpack bundling.
+* The guide covers prerequisites, installation, configuration, running tests (both individual cases and the full suite), viewing results, and troubleshooting. All instructions work across macOS, Windows, and Linux environments.
 
 ---
 
-## Introduction
+# Prerequisites
 
-This repository contains an end-to-end automation testing framework for the **V3 DMS** application built with **Playwright**. The test suite supports authentication-state management, custom reporting (including TestRail integration), and webpack bundling where applicable.
+-Before proceeding, ensure your development environment is prepared. This section covers downloading and installing essential tools.
 
-This README explains how to clone the repo, install dependencies, configure environments, run tests (single file, specific case, or full-suite), view results, and troubleshoot common issues across macOS, Windows, and Linux.
+1. **Install Node.js and npm**
 
----
+   -Node.js is the runtime environment for JavasScript , and npm (Node Package Manager) is used to install project dependencies.
 
-## Prerequisites
+   * Instruction for download and install :
 
-Before running the project, make sure the following tools are installed on your machine:
+     * Visit the official Node.js website : [https://nodejs.org/](https://nodejs.org/)
+     * For Windows/macOS: Run the installer (.msi for Windows, .pkg for macOS) and follow the prompts. Ensure the option to install npm is selected.
+   * Verify Installation : Open a terminal (Command Prompt on Windows, Terminal on macOS/Linux) and run:
 
-### 1. Node.js & npm
+     ```
+     node --version
+     npm --version
+     ```
+2. **Install Git**
 
-* Node.js is the JavaScript runtime and npm is the package manager used to install project dependencies.
-* Download: [https://nodejs.org/](https://nodejs.org/)
+   -Git is required for cloning the repository.
 
-Verify installation:
+   * Download and Install :
 
-```bash
-node --version
-npm --version
-```
+     * Visit [https://git-scm.com/downloads](https://git-scm.com/downloads) and download the version for your OS.
+   * Verify Installation with terminal :
 
-### 2. Git
+     ```
+     git --version
+     ```
+3. **Install Visual Studio Code (VS Code)**
 
-* Required to clone the repository.
-* Download: [https://git-scm.com/downloads](https://git-scm.com/downloads)
+   -VS Code is a recommended code editor for this project, supporting JavaScript/TypeScript debugging and extensions for Playwright.
 
-Verify installation:
+   * Download and Install :
 
-```bash
-git --version
-```
+     * Visit [https://code.visualstudio.com/download](https://code.visualstudio.com/download) and download the installer for your OS.
+     * Run the installer and follow the prompts. Add VS Code to your PATH if prompted.
+4. **Brefie structure about the project :**
 
-### 3. Visual Studio Code (recommended)
+   * playwright-report/: Folder for generated HTML test reports.
+   * src/: Contains the source code for tests (likely test files like .spec.js or .spec.ts).
+   * test-results/: Stores artifacts like screenshots, videos, or traces from failed tests.
+   * .gitignore: Specifies files/folders to ignore in Git (e.g., node\_modules).
+   * README.md: Project documentation (review this for any custom notes).
+   * globals.d.ts: TypeScript declaration file for global variables.
+   * jsconfig.json: Configuration for JavaScript projects in VS Code.
+   * package.json: Defines project dependencies, scripts, and metadata.
+   * playwright.config.js: Main configuration file for Playwright (e.g., browsers, timeouts, reporters).
+   * save-complete-auth.js: Script to save authentication state (e.g., for logged-in sessions).
+   * testrail-reporter.js: Custom reporter for integrating with TestRail (a test management tool).
+   * webpack.config.js: Webpack configuration for bundling code (if the project uses it for builds).
+5. **Detail instruction to run the project**
 
-* Recommended editor for JavaScript/TypeScript and Playwright debugging.
-* Download: [https://code.visualstudio.com/](https://code.visualstudio.com/)
+   * Step 1 : Cloning the Repository
 
----
+     1. Clone the repository :
 
-## Project structure (brief)
+        ```jsx
+        git clone https://github.com/spectrio-ir-dang/my-v3-dms-auto-playwright.git
+        ```
 
-```
-playwright-report/        # Generated HTML test reports
-src/                      # Test source code (e.g. .spec.js / .spec.ts)
-test-results/             # Artifacts: screenshots, videos, traces
-.gitignore
-README.md                 # This file
-globals.d.ts              # TypeScript global declarations
-jsconfig.json             # VSCode JS project config
-package.json              # Dependencies & scripts
-playwright.config.js      # Playwright configuration
-save-complete-auth.js     # Script to persist authentication state
-testrail-reporter.js      # Custom TestRail reporter
-webpack.config.js         # Webpack config (if used)
-```
+     2. Navigate into the project folder :
 
----
+        ```jsx
+        cd my-v3-dms-auto-playwright
+        ```
+   * Step 3 : Create new file .env for the project
+       ```jsx
+        MODE=dev
+        MPDM_USERNAME=admin@inreality.com
+        MPDM_PASSWORD=389102901
+        PROD_V3_USERNAME=hktest@dcsg.com
+        PROD_V3_PASSWORD=no69eZ55P6EV
+        GEMINI_API_KEY=AIzaSyBFe5_pzBgU7R489P9xj1ICWBustwgrHis
+        V2_API_KEY=4aviNvEiWgydwE9ctj-CTb8Q.Ljr-ziGzBR6wA
+        API_KEY=hT3HhDEqapsegMvEc2RpHiARs
+        BEARER_TOKEN=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImNOaXlxMGNKY0x4UUliTlU3dEZhNiJ9.eyJodHRwczovL3d3dy5pbnJlYWxpdHkuY29tL2NsYWltcy9lbWFpbCI6ImhvYW4ubmd1eWVuQHNwZWN0cmlvLmNvbSIsImVtYWlsIjoiaG9hbi5uZ3V5ZW5Ac3BlY3RyaW8uY29tIiwibmFtZSI6IkhvYW4gTmd1eWVuIiwib3JnYW5pemF0aW9ucyI6W3siYXBwX3JvbGVzIjpbeyJpc0RlZmF1bHQiOnRydWUsInJvbGVfaWQiOiI2NjlmMzAwNDA5NGZlZmMwNzQ1MDcwY2MifV0sIm9yZ19pZCI6IjY2OWYzMDAwMDk0ZmVmYzA3NDUwNzBjNCIsIm9yZ19uYW1lIjoiRW5nYWdlIEN1c3RvbWVyIn1dLCJpcl9hY2NvdW50X2lkIjoiNjY5ZjMwMDAwOTRmZWZjMDc0NTA3MGM0Iiwib3JnYW5pemF0aW9uX2lkIjoiNjY5ZjMwMDAwOTRmZWZjMDc0NTA3MGM0IiwiaXJfcm9sZV9pZCI6IjY2OWYzMDA0MDk0ZmVmYzA3NDUwNzBjYyIsImlzcyI6Imh0dHBzOi8vYXV0aDAtZGV2LmlucmVhbGl0eS5jb20vIiwic3ViIjoiZ29vZ2xlLW9hdXRoMnwxMDI3NDg3NzIxNDA4NDU4MTAwMDgiLCJhdWQiOlsiaHR0cHM6Ly92My1kZXYuaW5yZWFsaXR5LmNvbS92My9hcGkvIiwiaHR0cHM6Ly9kZXYtaW5yZWFsaXR5LnVzLmF1dGgwLmNvbS91c2VyaW5mbyJdLCJpYXQiOjE3NTU3NzMzNDcsImV4cCI6MTc1NTg1OTc0Nywic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCIsImF6cCI6IjZtdWVSeWpENTVSN2NkR2ppRWRxR2JOZFAxdnJGVTR0IiwicGVybWlzc2lvbnMiOltdfQ.F0-IkO5PVgV6ttwPL6wNo0d6V7aDPRYzJKaXAQq6O_FQRmH37UEu1qV3QYWKliL8leWrz4zJsrbi1Zrr6zZcKFFxfDO3c--2kHR6pPpcgIQvHOYZ_hOcfGLb5JRaeTETzuTw3HYORRVh28l8jwA4hYsOzkV9N1ziGAWfSZ5WBYWbVX8Lna25Y3iArkoSFUAmIeMMiroX1mk3qPBgZYA3hKzhA6gVF4YL7z6XH6RBexKYjCwVfRlEbqngKIhh8WopwWZd7tT3RHD3T1sfMnedOsshFQ9O2uUyI0XAwEum7H9Sewv5wPdOZmqNyijY3yajyuSXTPVAfXleHHk-JpAmKw
+        ```
 
-## Setup — clone & install
+   * Step 2 : Setting Up the Project
 
-### Step 1 — Clone the repository
+     1. Install Dependencies :
 
-```bash
-git clone https://github.com/spectrio-ir-dang/my-v3-dms-auto-playwright.git
-cd my-v3-dms-auto-playwright
-```
+        ```jsx
+        npm install
+        ```
 
-### Step 2 — Install dependencies
+     2. Install Playwright Browsers :
 
-```bash
-npm install
-```
+        ```jsx
+        npx playwright install
+        ```
 
-### Step 3 — Install Playwright browsers
+     3. Configure Authentication : The project includes save-complete-auth.js, likely for persisting login sessions to avoid repeated logins.
 
-```bash
-npx playwright install
-```
+        ```jsx
+        node save-complete-auth.js
+        ```
+   * Step 3 : Running Test Cases
 
----
+     1. Run a Specific Test File:
 
-## Save authentication state
+        ```jsx
+        npx playwright test src/path/to/your-test-file.spec.js
+        ```
 
-The repository includes a helper script `save-complete-auth.js` that can be used to persist authentication state so tests do not need to log in repeatedly. Run it like:
+     2. Run all Test File:
 
-```bash
-node save-complete-auth.js
-```
+        ```jsx
+        npx playwright test
+        ```
 
-> The script will create a storage state file (auth file) that Playwright can reuse via `storageState` in `playwright.config.js`.
+     3. Run a Specific Test Case (by Title) : Use the -g flag for grep:
 
----
+        ```jsx
+        npx playwright test -g "C13334"
+        ```
 
-## Run tests
+     4. UI Mode (for Debugging):
 
-### Run a specific test file
+        * Here is the picture example about run the test case with mode —ui , you can choose source , error and console or network to get more detail about test case after run success .
 
-```bash
-npx playwright test src/path/to/your-test-file.spec.js
-```
+        ![Screen Shot 2025-09-15 at 18.38.30.png](attachment:37f68e22-4e9f-47d8-a80c-1e10c9739b6b\:Screen_Shot_2025-09-15_at_18.38.30.png)
 
-### Run all tests
+        ```jsx
+        npx playwright test src/your-test.spec.js --ui
+        ```
 
-```bash
-npx playwright test
-```
+     5. **Debug Mode:**
 
-### Run a specific test case (by title / grep)
+        ```jsx
+        npx playwright test src/your-test.spec.js --debug
+        ```
+   * Step 4 : Running test in different enviroment
+      * Option 1 : Change MODE by command in terminal .   
+     ```jsx
+     # Development environment
+     MODE=dev npx playwright test
 
-```bash
-npx playwright test -g "C13334"
-```
+     # Staging environment  
+     MODE=staging npx playwright test
 
-### Run with the Playwright UI (helpful for debugging)
+     # Production environment
+     MODE=production npx playwright test
+     ```
+      * Option 2 : Change MODE by .env file.
+     ```jsx
+        MODE=dev | staging | production
+     ```  
 
-```bash
-npx playwright test src/your-test.spec.js --ui
-```
+     
+     
+6. **Environment Configuration**
 
-When you run with `--ui` you can inspect source, errors, console messages and network requests in the Playwright UI.
+* DMS Environments (src/dms/config/) : Place to store configuration include(apiBaseUrl , username , password , url for each page ) is used to run test for each aplication ,
 
-### Debug mode
+  * **Development (dev.js):**
 
-```bash
-npx playwright test src/your-test.spec.js --debug
-```
+    ```jsx
+    module.exports = {
+        apiBaseURL: 'https://v3-dev.inreality.com/',
+        baseURL: 'https://v3-dev.inreality.com/v3/auth0/',
+        username: 'hoan.nguyen@spectrio.com',
+        password: 'Hoan@123',
+        pageURL: {
+            dashboard: {
+                url: 'https://v3-dev.inreality.com/v3/auth0/dashboard',
+                name: 'autoDashboard'
+            }
+            // ... other page configurations
+        }
+    };
+    ```
 
----
+  * **Production (production.js):**
 
-## Run tests in different environments
-
-Set the `MODE` environment variable before running tests to point tests at different environments (dev / staging / production). Example:
-
-```bash
-# macOS / Linux
-MODE=dev npx playwright test
-MODE=staging npx playwright test
-MODE=production npx playwright test
-
-# Windows (PowerShell)
-$env:MODE = "dev"; npx playwright test
-```
-
-> The test code reads configuration from files under `src/dms/config/` and chooses the appropriate config according to `MODE`.
-
----
-
-## Environment configuration files (DMS)
-
-Configuration files live in `src/dms/config/`. They typically expose fields such as `apiBaseURL`, `baseURL`, `username`, `password`, and named page URLs.
-
-Example **dev.js**:
-
-```js
-module.exports = {
-  apiBaseURL: 'https://v3-dev.inreality.com/',
-  baseURL: 'https://v3-dev.inreality.com/v3/auth0/',
-  username: 'hoan.nguyen@spectrio.com',
-  password: 'Hoan@123',
-  pageURL: {
-    dashboard: {
-      url: 'https://v3-dev.inreality.com/v3/auth0/dashboard',
-      name: 'autoDashboard'
+    ```jsx
+    module.exports = {
+        apiBaseURL: 'https://app.inreality.com/',
+        baseURL: 'https://app.inreality.com/v3/auth0/',
+        username: process.env.PROD_V3_USERNAME,
+        password: process.env.PROD_V3_PASSWORD,
+        // ... production-specific configurations
+    };
+    ```
+  * **More explanation how environment configuration works:**
+    * On top line of file(/src/page/formula-editor-page.js) and the same with another one always have line for import configure enviroment into file :
+    ```jsx
+    const config = require('../config/config-loader');
+    ```
+    * An example of how the configs are used in the test file(/src/page/formula-editor-page.js):
+    ```jsx
+    async goToPerformanceScorePage() {
+        await this.page.goto(config.pageURL.performanceScore.url);
+        await this.page.waitForLoadState('networkidle');
+        await this.performanceScoreHeader.waitFor({ state: 'visible', timeout: 30000 });
     }
-    // ... other page configs
-  }
-};
-```
+    ```
 
-Example **production.js** (use environment variables for secrets):
 
-```js
-module.exports = {
-  apiBaseURL: 'https://app.inreality.com/',
-  baseURL: 'https://app.inreality.com/v3/auth0/',
-  username: process.env.PROD_V3_USERNAME,
-  password: process.env.PROD_V3_PASSWORD,
-  // ... production-specific configs
-};
-```
+1. **Configure Playwright :**
 
-**Important:** Keep production credentials out of source control. Use environment variables or secret management.
+   The playwright.config.js file is the heart of your testing configuration. It controls how tests are executed, which browsers to use, timeout settings, and many other important aspects of your test suite.
 
----
+   * **Test Directory and Timeout Configuration:**
 
-## Playwright configuration highlights
+     The testDir tells Playwright where to look for your test files. If you have tests in different folders, you can change this path. The timeout setting prevents tests from running indefinitely - if a test takes longer than 3 minutes, it will automatically fail. The expect.timeout specifically controls how long Playwright waits for assertions to pass.
 
-The `playwright.config.js` file controls how tests run. Important options used by this project:
+     ```jsx
+     module.exports = defineConfig({
+         testDir: './src/dms/tests',        // Specifies where your test files are located
+         timeout: 3 * 60 * 1000,           // Sets maximum time (3 minutes) for each test to complete
+         expect: {
+             timeout: 10000                 // Sets timeout (10 seconds) for assertions like expect().toBeVisible()
+         },
+     });
+     ```
 
-* `testDir` — where test files are located (e.g. `./src/dms/tests`).
-* `timeout` — maximum time a test can run (e.g. `3 * 60 * 1000` for 3 minutes).
-* `expect.timeout` — timeout for Playwright assertions (e.g. `10000` ms).
-* `fullyParallel: false` & `workers: 1` — ensures tests run sequentially (important when reusing shared authentication state).
-* `retries` — how many times to automatically retry failed tests.
+   * **Parallel Execution Settings:**
 
-### Browser projects
+     Setting fullyParallel to false means tests run one after another, which is important for this project because tests share authentication state. Using workers: 1 ensures only one test runs at a time, preventing conflicts. You can increase retries if you want Playwright to automatically re-run failed tests.
 
-Example projects block (Chromium, Firefox, WebKit). The codebase may use a shared `authFile` (storage state) when available:
+     ```jsx
+     fullyParallel: false,    // Controls whether tests run simultaneously
+     workers: 1,              // Number of parallel test processes
+     retries: 0,              // How many times to retry failed tests
+     ```
 
-```js
-projects: [
-  { name: 'chromium', use: { browserName: 'chromium' } },
-  {
-    name: 'firefox',
-    use: { browserName: 'firefox', storageState: fs.existsSync(authFile) ? authFile : undefined }
-  },
-  {
-    name: 'webkit',
-    use: { browserName: 'webkit', storageState: fs.existsSync(authFile) ? authFile : undefined }
-  }
-]
-```
+   * **Browser Configuration:**
 
-### Visual & debugging features
+     When you uncomment Firefox and WebKit sections, your tests will run on all three browser engines. This is valuable for cross-browser compatibility testing, ensuring your application works correctly across different browsers.
 
-* `headless: false` — show the browser during runs (helpful when debugging).
-* `video: 'on-first-retry'` & `trace: 'on-first-retry'` — capture artifacts on retries for investigation.
-* `screenshot: 'only-on-failure'` — take screenshots when tests fail.
-* `launchOptions.slowMo` — add a small delay between actions while debugging.
+     ```jsx
+     projects: [
+         {
+             name: 'chromium',
+             use: { browserName: 'chromium' },
+         },
+         // Uncomment these sections to enable additional browsers:
+         {
+             name: 'firefox',
+             use: {
+                 browserName: 'firefox',
+                 storageState: fs.existsSync(authFile) ? authFile : undefined,
+             },
+         },
+         {
+             name: 'webkit',
+             use: {
+                 browserName: 'webkit',
+                 storageState: fs.existsSync(authFile) ? authFile : undefined,
+             },
+         },
+     ],
+     ```
 
----
+   * **Visual and Debugging Configuration:**
 
-## Reporting & artifacts
+     Setting headless: false means you can watch the browser execute your tests, which is helpful for debugging. The video and trace options create recordings that help you understand what happened when tests fail. slowMo makes the browser actions slower so you can follow what's happening.
 
-* **HTML reports** are generated into `playwright-report/`. Open the generated `index.html` after a run to view a navigable report.
-* **test-results/** stores raw artifacts: screenshots, videos, and traces for failed tests.
-* The project includes `testrail-reporter.js` for pushing results to TestRail when enabled.
+     ```jsx
+     use: {
+         headless: false,                    // Shows browser window during test execution
+         viewport: { width: 1280, height: 720 }, // Sets browser window size
+         video: 'on-first-retry',           // Records video when tests are retried
+         trace: 'on-first-retry',           // Captures detailed execution trace
+         screenshot: 'only-on-failure',     // Takes screenshots when tests fail
+         launchOptions: {
+             slowMo: 100,                   // Adds 100ms delay between actions for visibility
+         },
+     }
+     ```
 
-Generate an HTML report and open it locally:
+   * **Reporting Configuration:**
 
-```bash
-# after running tests
-npx playwright show-report
-```
+     You can enable multiple reporters simultaneously. The list reporter shows real-time progress, html creates a detailed visual report, and the custom TestRail reporter sends results to your test management system.
+     ```jsx
+     reporter: [
+          ['list'],                          // Shows test progress in console
+          ['html'],                          // Generates HTML report
+          ['./testrail-reporter.js']         // Custom TestRail integration
+      ],
+     ```
 
----
-
-## Troubleshooting
-
-**1. Install / version issues**
-
-* If Node/npm versions are incompatible, upgrade/downgrade Node using `nvm` (recommended).
-
-**2. Playwright browser download fails**
-
-* Re-run `npx playwright install` and ensure you have network access. Check firewall/proxy settings.
-
-**3. Authentication / storage state issues**
-
-* Re-run `node save-complete-auth.js` to regenerate the storage state file.
-* Confirm the path to `storageState` in `playwright.config.js` is correct.
-
-**4. Tests interfering with each other**
-
-* Ensure `fullyParallel` is `false` and `workers` is `1` if tests share authentication state, or refactor tests to be isolated.
-
-**5. Debugging a failing test**
-
-* Run the failing test with `--ui` or `--debug` to see browser actions, console output, and network traffic.
-* Review artifacts in `test-results/` and `playwright-report/` for screenshots and traces.
-
----
-
-## Notes & best practices
-
-* Store secrets (production credentials) outside the repository. Use environment variables or a secrets manager.
-* Keep tests deterministic: avoid flaky selectors and rely on stable locators or data-test attributes.
-* When adding cross-browser runs, test gradually and ensure `storageState` is compatible across browsers if reusing it.
-* Use retries and artifact capture strategically to debug intermittent failures.
-
----
-
-## License / Contact
-
-If you need help or want to report issues, please open an issue in the repository or contact the project owner.
-
----
-
-*Generated README for the `my-v3-dms-auto-playwright` repository.*
+     
